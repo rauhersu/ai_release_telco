@@ -135,18 +135,26 @@ async def readiness_probe(
     # LLM provider — config-only check (avoid spending money on a probe call).
     llm_provider = (getattr(settings, "LLM_PROVIDER", None) or "").lower()
     if llm_provider:
-        key_field = {
-            "openai": "OPENAI_API_KEY",
-            "anthropic": "ANTHROPIC_API_KEY",
-            "google": "GOOGLE_API_KEY",
-            "openrouter": "OPENROUTER_API_KEY",
-        }.get(llm_provider)
-        api_key = getattr(settings, key_field, None) if key_field else None
-        checks["llm"] = {
-            "status": "healthy" if api_key else "unhealthy",
-            "provider": llm_provider,
-            "detail": "API key configured" if api_key else "API key missing",
-        }
+        if llm_provider == "vertex":
+            is_configured = bool(getattr(settings, "VERTEX_PROJECT_ID", ""))
+            checks["llm"] = {
+                "status": "healthy" if is_configured else "unhealthy",
+                "provider": llm_provider,
+                "detail": "Vertex project configured" if is_configured else "VERTEX_PROJECT_ID missing",
+            }
+        else:
+            key_field = {
+                "openai": "OPENAI_API_KEY",
+                "anthropic": "ANTHROPIC_API_KEY",
+                "google": "GOOGLE_API_KEY",
+                "openrouter": "OPENROUTER_API_KEY",
+            }.get(llm_provider)
+            api_key = getattr(settings, key_field, None) if key_field else None
+            checks["llm"] = {
+                "status": "healthy" if api_key else "unhealthy",
+                "provider": llm_provider,
+                "detail": "API key configured" if api_key else "API key missing",
+            }
     else:
         checks["llm"] = {"status": "unknown", "detail": "not configured"}
 

@@ -9,6 +9,7 @@ from typing import Annotated, Any, Literal, TypedDict
 
 from langchain_anthropic import ChatAnthropic
 from langchain_core.language_models import BaseChatModel
+from langchain_google_vertexai.model_garden import ChatAnthropicVertex
 from langchain_core.messages import AIMessage, AnyMessage, HumanMessage, SystemMessage
 from langchain_core.tools import tool
 from langgraph.checkpoint.memory import MemorySaver
@@ -120,9 +121,6 @@ class LangGraphAssistant:
 
     def _create_model(self) -> BaseChatModel:
         """Create the LLM model with tools bound."""
-        # Claude: extended thinking needs an explicit token budget. ``max_tokens``
-        # must exceed the budget so the answer still has room. Anthropic also
-        # forces ``temperature=1`` whenever thinking is enabled.
         anthropic_kwargs: dict[str, Any] = {}
         if self.thinking_effort:
             budget = {"low": 1024, "medium": 4096, "high": 16384}.get(self.thinking_effort, 4096)
@@ -132,12 +130,24 @@ class LangGraphAssistant:
             }
             anthropic_kwargs["max_tokens"] = budget + 4096
             anthropic_kwargs["temperature"] = 1.0
-        model = ChatAnthropic(
-            model=self.model_name,
-            temperature=anthropic_kwargs.pop("temperature", self.temperature),
-            api_key=settings.ANTHROPIC_API_KEY,
-            **anthropic_kwargs,
-        )
+
+        temperature = anthropic_kwargs.pop("temperature", self.temperature)
+
+        if settings.LLM_PROVIDER == "vertex":
+            model = ChatAnthropicVertex(
+                model_name=self.model_name,
+                project=settings.VERTEX_PROJECT_ID,
+                location=settings.VERTEX_LOCATION,
+                temperature=temperature,
+                **anthropic_kwargs,
+            )
+        else:
+            model = ChatAnthropic(
+                model=self.model_name,
+                temperature=temperature,
+                api_key=settings.ANTHROPIC_API_KEY,
+                **anthropic_kwargs,
+            )
 
         return model.bind_tools(ALL_TOOLS)
 

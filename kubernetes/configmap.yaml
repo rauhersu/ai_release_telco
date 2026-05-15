@@ -1,0 +1,36 @@
+
+# ConfigMap for ai_telco_release
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ai_telco_release-config
+  namespace: ai_telco_release
+  labels:
+    app.kubernetes.io/name: ai_telco_release
+    app.kubernetes.io/component: backend
+data:
+  # Application settings
+  ENVIRONMENT: "production"
+  DEBUG: "false"
+  PROJECT_NAME: "ai_telco_release"
+  API_V1_STR: "/api/v1"
+  TIMEZONE: "UTC"
+  # PostgreSQL settings
+  POSTGRES_HOST: "postgres-service"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "ai_telco_release"
+  # Redis settings
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+  REDIS_DB: "0"
+  # Taskiq settings
+  TASKIQ_BROKER_URL: "redis://redis-service:6379/1"
+  TASKIQ_RESULT_BACKEND: "redis://redis-service:6379/1"
+  # Logfire settings
+  LOGFIRE_SERVICE_NAME: "ai_telco_release"
+  LOGFIRE_ENVIRONMENT: "production"
+  # Milvus settings
+  MILVUS_HOST: "milvus-service"
+  MILVUS_PORT: "19530"
+  # CORS settings (adjust for your domain)
+  CORS_ORIGINS: '["https://ai_telco_release.example.com"]'

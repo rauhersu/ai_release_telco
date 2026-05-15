@@ -1,0 +1,11 @@
+"""RAG document source connectors.
+
+Provides integrations for fetching documents from external sources
+(Google Drive, S3) for ingestion into the RAG pipeline.
+"""
+
+from app.services.rag.sources.google_drive import GoogleDriveSource
+
+__all__ = [
+    "GoogleDriveSource",
+]

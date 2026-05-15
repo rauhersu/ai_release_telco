@@ -1,0 +1,115 @@
+
+# Deployment for ai_telco_release Backend
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai_telco_release-backend
+  namespace: ai_telco_release
+  labels:
+    app.kubernetes.io/name: ai_telco_release
+    app.kubernetes.io/component: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ai_telco_release
+      app.kubernetes.io/component: backend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ai_telco_release
+        app.kubernetes.io/component: backend
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: backend
+          image: ai_telco_release:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+              name: http
+          envFrom:
+            - configMapRef:
+                name: ai_telco_release-config
+            - secretRef:
+                name: ai_telco_release-secrets
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /api/v1/ready
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          volumeMounts:
+            - name: media-data
+              mountPath: /app/media
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+      volumes:
+        - name: media-data
+          persistentVolumeClaim:
+            claimName: ai_telco_release-media
+      restartPolicy: Always
+
+---
+---
+# Taskiq Worker Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai_telco_release-taskiq-worker
+  namespace: ai_telco_release
+  labels:
+    app.kubernetes.io/name: ai_telco_release
+    app.kubernetes.io/component: taskiq-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ai_telco_release
+      app.kubernetes.io/component: taskiq-worker
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ai_telco_release
+        app.kubernetes.io/component: taskiq-worker
+    spec:
+      containers:
+        - name: taskiq-worker
+          image: ai_telco_release:latest
+          imagePullPolicy: Always
+          command: ["taskiq", "worker", "app.worker.taskiq_app:broker", "--workers", "2"]
+          envFrom:
+            - configMapRef:
+                name: ai_telco_release-config
+            - secretRef:
+                name: ai_telco_release-secrets
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      restartPolicy: Always

@@ -1,0 +1,20 @@
+
+# Service for ai_telco_release Backend
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai_telco_release-backend
+  namespace: ai_telco_release
+  labels:
+    app.kubernetes.io/name: ai_telco_release
+    app.kubernetes.io/component: backend
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: ai_telco_release
+    app.kubernetes.io/component: backend

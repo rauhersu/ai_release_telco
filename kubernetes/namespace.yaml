@@ -1,0 +1,9 @@
+
+# Kubernetes Namespace for ai_telco_release
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ai_telco_release
+  labels:
+    app.kubernetes.io/name: ai_telco_release
+    app.kubernetes.io/managed-by: kubectl

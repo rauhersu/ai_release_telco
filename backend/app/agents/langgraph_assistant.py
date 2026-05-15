@@ -78,7 +78,6 @@ async def search_documents(query: str, top_k: int = 5) -> str:
 
 # List of all available tools
 ALL_TOOLS = [current_datetime]
-ALL_TOOLS.append(search_documents)
 
 
 class LangGraphAssistant:

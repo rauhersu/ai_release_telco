@@ -4,22 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { APP_NAME, ROUTES } from "@/lib/constants";
-import {
-  LayoutDashboard,
-  MessageSquare,
-  Database,
-  UserCircle,
-  ShieldAlert,
-  Building2,
-  CreditCard,
-} from "lucide-react";
+import { MessageSquare, Settings, ShieldAlert } from "lucide-react";
 import { useSidebarStore, useAuthStore } from "@/stores";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui";
 
 const navigation = [
-  { name: "Dashboard", href: ROUTES.DASHBOARD, icon: LayoutDashboard },
   { name: "Chat", href: ROUTES.CHAT, icon: MessageSquare },
-  { name: "Profile", href: ROUTES.PROFILE, icon: UserCircle },
+  { name: "Settings", href: ROUTES.SETTINGS, icon: Settings },
 ];
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
@@ -29,7 +20,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <nav className="flex-1 space-y-1 p-4">
       {navigation.map((item) => {
-        const isActive = pathname === item.href;
+        const isActive = pathname === item.href || pathname?.startsWith(item.href + "/");
         return (
           <Link
             key={item.name}
@@ -55,7 +46,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
           className={cn(
             "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors",
             "min-h-[44px]",
-            pathname.startsWith("/admin")
+            pathname?.startsWith("/admin")
               ? "bg-secondary text-secondary-foreground"
               : "text-muted-foreground hover:bg-secondary/50 hover:text-secondary-foreground",
           )}
@@ -65,23 +56,6 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
         </Link>
       )}
     </nav>
-  );
-}
-
-function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
-  return (
-    <div className="flex h-full flex-col">
-      <div className="flex h-14 items-center border-b px-4">
-        <Link
-          href={ROUTES.HOME}
-          className="flex items-center gap-2 font-semibold"
-          onClick={onNavigate}
-        >
-          <span>{APP_NAME}</span>
-        </Link>
-      </div>
-      <NavLinks onNavigate={onNavigate} />
-    </div>
   );
 }
 

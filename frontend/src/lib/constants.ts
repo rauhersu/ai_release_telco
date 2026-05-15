@@ -29,22 +29,12 @@ export const ROUTES = {
   HOME: "/",
   LOGIN: "/login",
   REGISTER: "/register",
-  DASHBOARD: "/dashboard",
   CHAT: "/chat",
-  PROFILE: "/profile",
   SETTINGS: "/settings",
-  RAG: "/rag",
   ADMIN: "/admin",
   ADMIN_USERS: "/admin/users",
   ADMIN_CONVERSATIONS: "/admin/conversations",
   ADMIN_RATINGS: "/admin/ratings",
-  ORGS: "/orgs",
-  ORG_MEMBERS: (id: string) => `/orgs/${id}/members`,
-  ORG_SETTINGS: (id: string) => `/orgs/${id}/settings`,
-  KB: "/kb",
-  KB_DETAIL: (id: string) => `/kb/${id}`,
-  BILLING: "/billing",
-  PRICING: "/pricing",
 } as const;
 
 // WebSocket URL (for chat - direct to backend, use wss:// in production)

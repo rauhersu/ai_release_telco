@@ -8,24 +8,13 @@ import { ThemeToggle } from "@/components/theme";
 import { LanguageSwitcherCompact } from "@/components/language-switcher";
 import { APP_NAME, ROUTES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import {
-  LogOut,
-  Menu,
-  LayoutDashboard,
-  MessageSquare,
-  Database,
-  UserCircle,
-  Building2,
-  CreditCard,
-  ShieldCheck,
-} from "lucide-react";
+import { LogOut, Menu, MessageSquare, Settings, ShieldCheck } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
 import { useSidebarStore } from "@/stores";
 
-const adminNavItems = [
-  { name: "Dashboard", href: ROUTES.DASHBOARD, icon: LayoutDashboard, adminOnly: false },
+const navItems = [
   { name: "Chat", href: ROUTES.CHAT, icon: MessageSquare, adminOnly: false },
-  { name: "Profile", href: ROUTES.PROFILE, icon: UserCircle, adminOnly: false },
+  { name: "Settings", href: ROUTES.SETTINGS, icon: Settings, adminOnly: false },
   { name: "Admin", href: ROUTES.ADMIN, icon: ShieldCheck, adminOnly: true },
 ];
 
@@ -44,13 +33,13 @@ export function Header() {
             <span className="sr-only">Toggle menu</span>
           </Button>
 
-          <Link href={ROUTES.DASHBOARD} className="text-sm font-bold tracking-tight sm:text-base">
+          <Link href={ROUTES.CHAT} className="text-sm font-bold tracking-tight sm:text-base">
             {APP_NAME}
           </Link>
 
           {/* Desktop nav links */}
           <nav className="hidden items-center gap-0.5 md:flex">
-            {adminNavItems
+            {navItems
               .filter((item) => !item.adminOnly || user?.role === "admin")
               .map((item) => {
                 const isActive = pathname?.includes(item.href);
@@ -74,14 +63,14 @@ export function Header() {
           </nav>
         </div>
 
-        {/* Right: org switcher, language, theme, user */}
+        {/* Right: language, theme, user */}
         <div className="flex items-center gap-2 sm:gap-3">
           <LanguageSwitcherCompact />
           <ThemeToggle />
           {isAuthenticated ? (
             <>
               <Button variant="ghost" size="sm" asChild className="h-10 px-2 sm:px-3">
-                <Link href={ROUTES.PROFILE} className="flex items-center gap-2">
+                <Link href={ROUTES.SETTINGS} className="flex items-center gap-2">
                   <Avatar className="h-6 w-6">
                     {user?.avatar_url && (
                       <AvatarImage src={`/api/users/avatar/${user.id}`} alt={user.email} />

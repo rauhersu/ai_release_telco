@@ -7,18 +7,12 @@ import {
   Activity,
   ArrowRight,
   BookOpen,
-  Building2,
-  CreditCard,
-  Database,
-  LayoutDashboard,
   LogOut,
   MessageSquare,
   Plus,
   Search,
   Settings,
   Star,
-  UserCircle,
-  Users,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -96,11 +90,6 @@ export function CommandPalette() {
 
         <Group heading="Quick actions">
           <PaletteItem icon={Plus} label="Start new chat" onSelect={() => go(ROUTES.CHAT)} shortcut="⌘N" />
-          <PaletteItem
-            icon={Database}
-            label="Upload to knowledge base"
-            onSelect={() => go(ROUTES.RAG)}
-          />
         </Group>
 
         {conversations.length > 0 && (
@@ -117,13 +106,7 @@ export function CommandPalette() {
         )}
 
         <Group heading="Navigate">
-          <PaletteItem
-            icon={LayoutDashboard}
-            label="Dashboard"
-            onSelect={() => go(ROUTES.DASHBOARD)}
-          />
           <PaletteItem icon={MessageSquare} label="Chat" onSelect={() => go(ROUTES.CHAT)} />
-          <PaletteItem icon={UserCircle} label="Profile" onSelect={() => go(ROUTES.PROFILE)} />
           <PaletteItem icon={Settings} label="Settings" onSelect={() => go(ROUTES.SETTINGS)} />
           <PaletteItem
             icon={BookOpen}

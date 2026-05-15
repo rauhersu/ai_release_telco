@@ -6,17 +6,13 @@ import { ChevronRight } from "lucide-react";
 import { ROUTES } from "@/lib/constants";
 
 const ROUTE_LABELS: Record<string, string> = {
-  [ROUTES.DASHBOARD]: "Dashboard",
   [ROUTES.CHAT]: "Chat",
-  [ROUTES.RAG]: "Knowledge Base",
-  [ROUTES.PROFILE]: "Profile",
   "/settings": "Settings",
 };
 
 export function Breadcrumb() {
   const pathname = usePathname();
 
-  // Extract the route part after locale
   const segments = pathname?.split("/").filter(Boolean) || [];
   const routeSegments = segments.length > 1 ? segments.slice(1) : segments;
 

@@ -2,16 +2,9 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  Database,
-  LayoutDashboard,
-  MessageSquare,
-  Search,
-  Settings,
-} from "lucide-react";
+import { MessageSquare, Search, Settings } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-import { useAuth } from "@/hooks";
 import { ROUTES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +12,6 @@ interface TabItem {
   label: string;
   href?: string;
   icon: LucideIcon;
-  /** When true, treat as active if pathname starts with `href`. */
   startsWith?: boolean;
   onClick?: () => void;
 }
@@ -27,22 +19,15 @@ interface TabItem {
 export function MobileTabBar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user } = useAuth();
 
   const stripped = pathname.replace(/^\/[a-z]{2}/, "");
 
   const items: TabItem[] = [
     { label: "Chat", href: ROUTES.CHAT, icon: MessageSquare, startsWith: true },
     {
-      label: "Home",
-      href: user?.role === "admin" ? ROUTES.DASHBOARD : ROUTES.CHAT,
-      icon: LayoutDashboard,
-    },
-    {
       label: "Search",
       icon: Search,
       onClick: () => {
-        // Trigger global ⌘K command palette via synthetic keyboard event.
         const event = new KeyboardEvent("keydown", {
           key: "k",
           metaKey: true,

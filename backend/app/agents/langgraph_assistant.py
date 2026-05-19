@@ -22,6 +22,12 @@ from langgraph.prebuilt import ToolNode
 from app.agents.prompts import get_system_prompt_with_rag
 from app.agents.tools import get_current_datetime
 from app.agents.tools.rag_tool import search_knowledge_base
+from app.agents.tools.release_tool import (
+    KNOWN_PRODUCTS,
+    list_release_states,
+    read_release_state,
+    run_release_dry_run,
+)
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
@@ -76,8 +82,66 @@ async def search_documents(query: str, top_k: int = 5) -> str:
     return await search_knowledge_base(query=query, top_k=top_k)
 
 
-# List of all available tools
-ALL_TOOLS = [current_datetime]
+@tool
+def release_pipeline_dry_run(product: str, version: str, ocp_version: str) -> str:
+    """Trigger a Konflux release pipeline dry-run for a telco operator.
+
+    Use this tool when the user asks to release an operator or run a release
+    pipeline. This executes a dry-run (no real changes are made).
+
+    Available products: lifecycle-agent, topology-aware-lifecycle-manager,
+    numaresources-operator, o-cloud-manager, ztp-site-generate.
+
+    Args:
+        product: Product key, e.g. 'lifecycle-agent'.
+        version: Release version, e.g. '4.21.2'.
+        ocp_version: Target OCP version, e.g. '4.21'.
+    """
+    return run_release_dry_run(product=product, version=version, ocp_version=ocp_version)
+
+
+@tool
+def list_available_operators() -> str:
+    """List the operators available for release via the Konflux release pipeline.
+
+    Use this tool when the user asks which operators can be released.
+    """
+    lines = []
+    for key, info in KNOWN_PRODUCTS.items():
+        lines.append(f"- {key}: {info['display_name']}")
+    return "Available operators:\n" + "\n".join(lines)
+
+
+@tool
+def show_release_state(product: str, version: str) -> str:
+    """Read and display the state file from a release pipeline run.
+
+    Use this tool when the user asks to see the state file, status, or details
+    of a release that has been run.
+
+    Args:
+        product: Product key, e.g. 'lifecycle-agent'.
+        version: Release version, e.g. '4.21.2'.
+    """
+    return read_release_state(product=product, version=version)
+
+
+@tool
+def show_all_release_states() -> str:
+    """List all release pipeline state files and their current phase.
+
+    Use this tool when the user asks to see all releases or their status.
+    """
+    return list_release_states()
+
+
+ALL_TOOLS = [
+    current_datetime,
+    release_pipeline_dry_run,
+    list_available_operators,
+    show_release_state,
+    show_all_release_states,
+]
 
 
 class LangGraphAssistant:

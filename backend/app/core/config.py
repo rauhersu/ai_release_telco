@@ -161,8 +161,8 @@ class Settings(BaseSettings):
         "claude-sonnet-4-6",
         "claude-sonnet-4-5-20241022",
         "claude-haiku-3-5-20241022",
-        "claude-sonnet-4-6@20250514",
-        "claude-haiku-4-5@20251001",
+        "claude-sonnet-4",
+        "claude-haiku-3-5",
     ]
     AI_FRAMEWORK: str = "langgraph"
     LLM_PROVIDER: str = "anthropic"  # "anthropic" (direct API) or "vertex" (GCP Vertex AI)
